@@ -20,7 +20,7 @@ const EmptyState = () => (
     <Text mb={4} color="gray.500">
       Welcome, lets get started!
     </Text>
-    <AddSiteModal />
+    <AddSiteModal>Add your first site!</AddSiteModal>
   </Flex>
 );
 

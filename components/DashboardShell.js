@@ -7,15 +7,17 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  Heading
+  Heading,
+  Button
 } from '@chakra-ui/core';
 
 import { useAuth } from '@/lib/auth';
+import AddSiteModal from './AddSiteModal';
 
 const DashboardShell = ({ children }) => {
   const { user } = useAuth();
   return (
-    <Flex flexDirection="column">
+    <Flex flexDirection="column" backgroundColor="gray.100">
       <Flex flexDirection="row" justifyContent="space-between" px={8} py={4}>
         <Stack isInline spacing={4}>
           <Icon name="logo" color="black" size="24px" />
@@ -27,16 +29,25 @@ const DashboardShell = ({ children }) => {
           <Avatar size="sm" src={user?.photoUrl} />
         </Flex>
       </Flex>
-      <Flex backgroundColor="gray.100" p={8} height="100vh">
-        <Flex maxWidth={800} ml="auto" mr="auto" direction="column" w="100%">
-          <Breadcrumb>
-            <BreadcrumbItem isCurrentPage>
-              <BreadcrumbLink color="gray.700">Sites</BreadcrumbLink>
-            </BreadcrumbItem>
-            <Heading>Sites</Heading>
-            {children}
-          </Breadcrumb>
-        </Flex>
+      <Flex
+        backgroundColor="gray.100"
+        p={8}
+        height="100vh"
+        margin="0 auto"
+        direction="column"
+        maxW="1250px"
+        px={8}
+      >
+        <Breadcrumb>
+          <BreadcrumbItem isCurrentPage>
+            <BreadcrumbLink color="gray.700">Sites</BreadcrumbLink>
+          </BreadcrumbItem>
+          <Flex justifyContent="space-between">
+            <Heading mb={8}>My Sites</Heading>
+            <AddSiteModal> + Add Site</AddSiteModal>
+          </Flex>
+          {children}
+        </Breadcrumb>
       </Flex>
     </Flex>
   );

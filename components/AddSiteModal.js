@@ -2,6 +2,8 @@ import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { createSite } from '@/lib/db';
 import { useAuth } from '@/lib/auth';
+import { mutate } from 'swr';
+
 import {
   Modal,
   ModalOverlay,
@@ -18,20 +20,21 @@ import {
   useToast
 } from '@chakra-ui/core';
 
-const AddSiteModal = () => {
+const AddSiteModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialRef = useRef();
   const { handleSubmit, register } = useForm();
   const toast = useToast();
   const auth = useAuth();
 
-  const onCreateSite = ({ email, name }) => {
-    createSite({
+  const onCreateSite = ({ name, url }) => {
+    const newSite = {
       authorId: auth.user.uid,
       createdAt: new Date().toISOString(),
-      email,
+      url,
       name
-    });
+    };
+    createSite(newSite);
     toast({
       title: 'Success',
       description: "We've added your site",
@@ -39,18 +42,32 @@ const AddSiteModal = () => {
       duration: 5000,
       isClosable: true
     });
+
+    mutate(
+      '/api/sites',
+      async (data) => {
+        return { sites: [...data.sites, newSite] };
+      },
+      false
+    );
+
     onClose();
   };
   return (
     <>
       <Button
-        fontWeight="medium"
-        maxW="200px"
-        backgroundColor="blackAlpha.50"
-        color="black"
+        id="add-site-modal-button"
         onClick={onOpen}
+        backgroundColor="gray.900"
+        color="white"
+        fontWeight="medium"
+        _hover={{ bg: 'gray.700' }}
+        _active={{
+          bg: 'gray.800',
+          transform: 'scale(0.95)'
+        }}
       >
-        Add your first site
+        {children}
       </Button>
 
       <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
@@ -63,7 +80,7 @@ const AddSiteModal = () => {
               <FormLabel>Name</FormLabel>
               <Input
                 placeholder="My site"
-                name="email"
+                name="name"
                 ref={register({
                   required: 'Required'
                 })}
@@ -71,10 +88,10 @@ const AddSiteModal = () => {
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Last name</FormLabel>
+              <FormLabel>Site Link</FormLabel>
               <Input
                 placeholder="https://website.com"
-                name="name"
+                name="url"
                 ref={register({
                   required: 'Required'
                 })}
