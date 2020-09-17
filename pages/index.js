@@ -1,5 +1,6 @@
-import { Button, Heading, Text, Code, Icon, Flex } from '@chakra-ui/core';
+import { Button, Text, Code, Icon, Flex } from '@chakra-ui/core';
 import Head from 'next/head';
+import cookie from 'js-cookie';
 
 import { useAuth } from '@/lib/auth';
 
@@ -14,6 +15,15 @@ export default function Home() {
       h="100vh"
     >
       <Head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+          if (document.cookie && document.cookie.includes('fast-feedback-auth')) {
+            window.location.href = "/dashboard"
+          }
+        `
+          }}
+        />
         <title> Fast Feedback App</title>
       </Head>
 
